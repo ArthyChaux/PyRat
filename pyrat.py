@@ -16,6 +16,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with PyRat.  If not, see <http://www.gnu.org/licenses/>.
 
+#    où t'es papa !
+
 # Imports
 from resources.imports.parameters import *
 from resources.imports.maze import *
