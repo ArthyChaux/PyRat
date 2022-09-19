@@ -292,7 +292,15 @@ def run_game(screen, infoObject):
 
     # Instantiate players
     debug("Instantiating players",1)
-    if not(is_human_rat):
+    if not(is_human_rat): 
+
+######### C'EST POUR QUE CE SOIT PLUS PRATIQUE #######
+
+        if args.rat == "":
+            args.rat = "AIs/random.py"
+
+######### C'EST POUR QUE CE SOIT PLUS PRATIQUE #######
+
         p1 = mp.Process(target=player, args=("rat", args.rat, q1_in, q1_out, q1_quit, width, height, args.preparation_time, args.turn_time,))
         p1.start()
     else:
