@@ -36,6 +36,40 @@ import gdown
 import ipynb_py_convert
 import json
 
+
+# args.random_seed = 
+# args.import_keras = 
+# args.nodrawing =
+# args.save_images =
+# args.postprocessing =
+# args.load_match =
+# args.save_match =
+# args.rat =
+# args.python =
+# args.maze_file =
+# args.width =
+# args.height =
+# args.density =
+# args.nonconnected =
+# args.nonsymmetric =
+# args.mud_density =
+# args.mud_range =
+# args.maze_file =
+# args.pieces =
+# args.random_cheese =
+# args.save =
+# args.preparation_time =
+# args.turn_time = 
+# args.synchronous =
+# args.max_turns =
+# args.auto_exit =
+# args.fullscreen =
+# args.window_width =
+# args.window_height =
+# args.tests =
+
+
+
 if args.import_keras:
     import keras
 
@@ -292,15 +326,7 @@ def run_game(screen, infoObject):
 
     # Instantiate players
     debug("Instantiating players",1)
-    if not(is_human_rat): 
-
-######### C'EST POUR QUE CE SOIT PLUS PRATIQUE #######
-
-        if args.rat == "":
-            args.rat = "AIs/random.py"
-
-######### C'EST POUR QUE CE SOIT PLUS PRATIQUE #######
-
+    if not(is_human_rat):
         p1 = mp.Process(target=player, args=("rat", args.rat, q1_in, q1_out, q1_quit, width, height, args.preparation_time, args.turn_time,))
         p1.start()
     else:
