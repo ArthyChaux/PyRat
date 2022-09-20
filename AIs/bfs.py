@@ -46,3 +46,8 @@ def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_
     
     # Nothing to do here
     pass
+
+def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
+
+    # Returns a random move each turn
+    return random_move()
