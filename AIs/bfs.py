@@ -40,3 +40,9 @@ def traversal (start_vertex, graph) :
                     queuing_structure.push((neighbor, current_vertex))
               
     return explored_vertices, routing_table
+
+
+def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :
+    
+    # Nothing to do here
+    pass
