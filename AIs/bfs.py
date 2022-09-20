@@ -40,6 +40,3 @@ def traversal (start_vertex, graph) :
                     queuing_structure.push((neighbor, current_vertex))
               
     return explored_vertices, routing_table
-
-
-Graph=(V,E)
