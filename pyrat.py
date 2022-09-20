@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#    Copyright © 2017 Vincent Gripon (vincent.gripon@imt-atlatique.fr) and IMT Atlantique
+#    Copyright Â© 2017 Vincent Gripon (vincent.gripon@imt-atlatique.fr) and IMT Atlantique
 #
 #    This file is part of PyRat.
 #
@@ -35,40 +35,6 @@ import datetime
 import gdown
 import ipynb_py_convert
 import json
-
-
-# args.random_seed = 
-# args.import_keras = 
-# args.nodrawing =
-# args.save_images =
-# args.postprocessing =
-# args.load_match =
-# args.save_match =
-# args.rat =
-# args.python =
-# args.maze_file =
-# args.width =
-# args.height =
-# args.density =
-# args.nonconnected =
-# args.nonsymmetric =
-# args.mud_density =
-# args.mud_range =
-# args.maze_file =
-# args.pieces =
-# args.random_cheese =
-# args.save =
-# args.preparation_time =
-# args.turn_time = 
-# args.synchronous =
-# args.max_turns =
-# args.auto_exit =
-# args.fullscreen =
-# args.window_width =
-# args.window_height =
-# args.tests =
-
-
 
 if args.import_keras:
     import keras
@@ -278,7 +244,7 @@ def run_game(screen, infoObject):
     
     global is_human_rat, is_human_python
     
-    # Load saved match
+    #Â Load saved match
     if args.load_match :
         args.rat = args.load_match + os.path.sep + [f for f in os.listdir(args.load_match) if f[:4] == "rat_"][0]
         args.python = args.load_match + os.path.sep + [f for f in os.listdir(args.load_match) if f[:7] == "python_"][0]
@@ -369,7 +335,7 @@ def run_game(screen, infoObject):
         p1name = p1name[4:]
         p2name = p2name[7:]
 
-    # Prepare save match
+    #Â Prepare save match
     if args.save_match:
         savematch_dir = "saves" + os.path.sep + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         os.mkdir(savematch_dir)
