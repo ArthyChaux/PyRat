@@ -11,16 +11,35 @@ def pop_from_structure (structure) :
 visited = [] # List for visited nodes.
 queue = []     #Initialize a queue
 
-def traversal(start_vertex, graph, visited, node): #function for BFS
-    queuing_structure=current_structure
+def traversal (start_vertex, graph) :
+    # First we create either a LIFO or a FIFO
+    queuing_structure = new_queuing_structure() 
+    # Add the starting vertex with None as parent
+    queuing_structure.push((start_vertex, None))
+    # Initialize the outputs 
+    explored_vertices = [] 
+    routing_table = {} 
+    # Iterate while some vertices remain
+    while len(queuing_structure) > 0 :
     
-    while queue:          # Creating loop to visit each node
-        m = queue.pop(0) 
-        print (m, end = " ") 
-        for neighbour in graph[m]:
-            if neighbour not in visited:
-                visited.append(neighbour)
-                queue.append(neighbour)
+        # This will return the next vertex to be examined, and the choice of queuing structure will change the resulting order
+        (current_vertex, parent) = queuing_structure.pop() 
+    
+        # Tests whether the current vertex is in the list of explored vertices
+        if current_vertex not in explored_vertices :
+            # Mark the current_vertex as explored
+            explored_vertices.append(current_vertex) 
+       
+            # Update the routing table accordingly
+            routing_table[current_vertex] = parent 
+       
+            # Examine neighbors of the current vertex
+            for neighbor in neighbors(graph, current_vertex) :
+              # We push all unexplored neighbors to the queue
+                if neighbor not in explored_vertices :              
+                    queuing_structure.push((neighbor, current_vertex))
+              
+    return explored_vertices, routing_table
 
 
 Graph=(V,E)
