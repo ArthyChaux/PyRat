@@ -53,9 +53,4 @@ def find_route (routing_table, source_location, target_location):
     while target_location!=source_location:
         target_location=routing_table[target_location]
         route.append(target_location)
-return route[::-1]
-
-
-def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
-    global listmouv
-    return listmouv.pop()
+    return route[::-1]
