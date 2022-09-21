@@ -11,6 +11,9 @@ MOVE_UP = 'U'
 # Liste des déplacements à suivre
 next_moves = []
 
+
+
+
 ############## PYRAT BFS functions ##############
 
 def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :

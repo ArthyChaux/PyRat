@@ -1,5 +1,6 @@
  
  
+
   # Directions possibles
 MOVE_DOWN = 'D'
 MOVE_LEFT = 'L'
@@ -9,16 +10,24 @@ MOVE_UP = 'U'
 # Liste des déplacements à suivre
 next_moves = []
 
+
+
 ############## PYRAT BFS functions ##############
 
 def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :
     global next_moves
+
+
+##### A CHANGER
 
     # Table qui référence les déplacements à faire pour se rapprocher du joueur pour chaque case
     routing_table = traversal(player_location, maze_map)[1]
     
     # Tableau répertoriant les cases où passer pour aller du joueur au fromage
     route = find_route(routing_table, player_location, pieces_of_cheese[0])
+
+##### A CHANGER
+
 
     # Tableau répertoriant les deplacements à faire pour arriver au fromage
     next_moves = moves_from_route(route)
@@ -34,37 +43,22 @@ def turn (maze_map, maze_width, maze_height, player_location, opponent_location,
 
 import heapq
 import queue
-priority_queue = []
-
-def priority_queue () :
-    return []
-
-def is_empty (queue) :
-    return queue == priority_queue()
-
-def insert (queue, key, value) :
-    for i in range(len(queue)) :
-        key_i, value_i = queue[i]
-        if value < value_i  :
-            return queue[:i] + [(key, value)] + queue[i:]
-    return queue + [(key, value)]
-
-def extract (queue) :
-    return queue[0], queue[1:]
 
 def dijkstra(graph, start_vertex):
     # initialize
-    min_heap = priority_queue
+    min_heap = priority_queue()
     insert(min_heap, start_vertex, 0)
+
+    #TODO : implement a min_heap saving system to keep track of routes
+
     # algorithm loop
     while not(is_empty(min_heap)):
         v, distance = extract(min_heap)
+        
         for neighbor in graph[v]:
             distance_through_v = distance + graph[v][neighbor]
             insert(min_heap, neighbor, distance_through_v)
-    return v
-  
-############## Utilitaries ##############
+    
 
 def find_route(routing_table, source_location, target_location):
     # Renvoie un tableau répertoriant le chemin à suivre pour aller de source_location à target_location
@@ -96,6 +90,26 @@ def moves_from_route(route) :
             raise Exception("Impossible move")
     
     return moves[::-1]
+
+
+############## Priority queue Implementation #############
+
+def priority_queue () :
+    return []
+
+def is_empty (queue) :
+    return queue == priority_queue()
+
+def insert (queue, key, value) :
+    for i in range(len(queue)) :
+        key_i, value_i = queue[i]
+        if value < value_i  :
+            return queue[:i] + [(key, value)] + queue[i:]
+    
+    return queue + [(key, value)]
+
+def extract (queue) :
+    return queue[0], queue[1:]
 
 
 ############## FIFO Implementation ##############
