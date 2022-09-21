@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#    Copyright © 2017 Vincent Gripon (vincent.gripon@imt-atlatique.fr) and IMT Atlantique
+#    Copyright Â© 2017 Vincent Gripon (vincent.gripon@imt-atlatique.fr) and IMT Atlantique
 #
 #    This file is part of PyRat.
 #
@@ -44,18 +44,18 @@ import json
 # args.postprocessing =
 # args.load_match =
 # args.save_match =
-args.rat = "AIs/bfs.py"
+# args.rat =
 # args.python =
 # args.maze_file =
-args.width = 5
-args.height = 5
+# args.width =
+# args.height =
 # args.density =
 # args.nonconnected =
 # args.nonsymmetric =
 # args.mud_density =
 # args.mud_range =
 # args.maze_file =
-args.pieces = 1
+# args.pieces =
 # args.random_cheese =
 # args.save =
 # args.preparation_time =
@@ -278,7 +278,7 @@ def run_game(screen, infoObject):
     
     global is_human_rat, is_human_python
     
-    # Load saved match
+    #Â Load saved match
     if args.load_match :
         args.rat = args.load_match + os.path.sep + [f for f in os.listdir(args.load_match) if f[:4] == "rat_"][0]
         args.python = args.load_match + os.path.sep + [f for f in os.listdir(args.load_match) if f[:7] == "python_"][0]
@@ -369,7 +369,7 @@ def run_game(screen, infoObject):
         p1name = p1name[4:]
         p2name = p2name[7:]
 
-    # Prepare save match
+    #Â Prepare save match
     if args.save_match:
         savematch_dir = "saves" + os.path.sep + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         os.mkdir(savematch_dir)
