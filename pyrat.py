@@ -64,8 +64,8 @@ args.pieces = 1
 # args.max_turns =
 # args.auto_exit =
 # args.fullscreen =
-# args.window_width =
-# args.window_height =
+args.window_width = 720
+args.window_height = 480
 # args.tests =
 
 
