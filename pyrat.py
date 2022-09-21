@@ -47,8 +47,8 @@ import json
 args.rat = "AIs/bfs.py"
 # args.python =
 # args.maze_file =
-args.width = 5
-args.height = 5
+args.width = 25
+args.height = 25
 # args.density =
 # args.nonconnected =
 # args.nonsymmetric =
