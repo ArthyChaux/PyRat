@@ -44,19 +44,17 @@ def turn (maze_map, maze_width, maze_height, player_location, opponent_location,
 import heapq
 import queue
 
-def dijkstra(graph, start_vertex):
+def dijkstra(maze_map, start_vertex):
     # initialize
     min_heap = priority_queue()
     insert(min_heap, start_vertex, 0)
 
-    #TODO : implement a min_heap saving system to keep track of routes
-
     # algorithm loop
     while not(is_empty(min_heap)):
         v, distance = extract(min_heap)
-        
-        for neighbor in graph[v]:
-            distance_through_v = distance + graph[v][neighbor]
+
+        for neighbor in maze_map[v]:
+            distance_through_v = distance + maze_map[v][neighbor]
             insert(min_heap, neighbor, distance_through_v)
     
 
@@ -94,22 +92,17 @@ def moves_from_route(route) :
 
 ############## Priority queue Implementation #############
 
-def priority_queue () :
+def priority_queue():
     return []
 
-def is_empty (queue) :
+def is_empty(queue):
     return queue == priority_queue()
 
-def insert (queue, key, value) :
-    for i in range(len(queue)) :
-        key_i, value_i = queue[i]
-        if value < value_i  :
-            return queue[:i] + [(key, value)] + queue[i:]
-    
-    return queue + [(key, value)]
+def insert(queue, key, value):
+    heapq.heappush(queue, (value, key))
 
-def extract (queue) :
-    return queue[0], queue[1:]
+def extract(queue):
+    return heapq.heappop(queue)
 
 
 ############## FIFO Implementation ##############

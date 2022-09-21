@@ -48,7 +48,6 @@ def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_
     pass
 
 
-
 ##############################################################
 # The turn function is called each time the game is waiting
 # for the player to make a decision (a move).
