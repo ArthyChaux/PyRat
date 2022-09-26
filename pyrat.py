@@ -37,7 +37,7 @@ import ipynb_py_convert
 import json
 
 
-# args.random_seed = 
+# args.random_seed = 1036274385118677970
 # args.import_keras = 
 # args.nodrawing =
 # args.save_images =
@@ -57,7 +57,7 @@ args.height = 25
 # args.maze_file =
 args.pieces = 1
 # args.random_cheese =
-# args.save =
+# args.save = True
 # args.preparation_time =
 # args.turn_time = 
 # args.synchronous =

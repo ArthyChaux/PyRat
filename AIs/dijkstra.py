@@ -47,7 +47,7 @@ import queue
 def dijkstra(maze_map, start_vertex):
     # initialize
     min_heap = priority_queue()
-    insert(min_heap, start_vertex, 0)
+    add_or_replace(min_heap, start_vertex, 0)
 
     # algorithm loop
     while not(is_empty(min_heap)):
@@ -55,7 +55,7 @@ def dijkstra(maze_map, start_vertex):
 
         for neighbor in maze_map[v]:
             distance_through_v = distance + maze_map[v][neighbor]
-            insert(min_heap, neighbor, distance_through_v)
+            add_or_replace(min_heap, neighbor, distance_through_v)
     
 
 def find_route(routing_table, source_location, target_location):
@@ -98,11 +98,15 @@ def priority_queue():
 def is_empty(queue):
     return queue == priority_queue()
 
-def insert(queue, key, value):
-    heapq.heappush(queue, (value, key))
+def add_or_replace(queue, key, value):
+    for i in range(len(queue)) :
+        key_i, value_i = queue[i]
+        if value < value_i  :
+            return queue[:i] + [(key, value)] + queue[i:]
+    return queue + [(key, value)]
 
 def extract(queue):
-    return heapq.heappop(queue)
+    return queue[0], queue[1:]
 
 
 ############## FIFO Implementation ##############
