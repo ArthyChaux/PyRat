@@ -44,7 +44,7 @@ import json
 # args.postprocessing =
 # args.load_match =
 # args.save_match =
-args.rat = "AIs/bfs.py"
+args.rat = "AIs/dijkstra.py"
 # args.python =
 # args.maze_file =
 args.width = 25

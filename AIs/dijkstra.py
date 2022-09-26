@@ -18,15 +18,11 @@ def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_
     global next_moves
 
 
-##### A CHANGER
-
     # Table qui référence les déplacements à faire pour se rapprocher du joueur pour chaque case
-    routing_table = traversal(player_location, maze_map)[1]
+    routing_table = dijkstra(player_location, maze_map)
     
     # Tableau répertoriant les cases où passer pour aller du joueur au fromage
     route = find_route(routing_table, player_location, pieces_of_cheese[0])
-
-##### A CHANGER
 
 
     # Tableau répertoriant les deplacements à faire pour arriver au fromage
@@ -42,20 +38,31 @@ def turn (maze_map, maze_width, maze_height, player_location, opponent_location,
 #################### Dijkstra #####################
 
 import heapq
-import queue
 
-def dijkstra(maze_map, start_vertex):
-    # initialize
-    min_heap = priority_queue()
-    add_or_replace(min_heap, start_vertex, 0)
 
-    # algorithm loop
-    while not(is_empty(min_heap)):
-        v, distance = extract(min_heap)
+def dijkstra(start_vertex, maze_map):
+    # Initialisation de la routing table et du min_heap
+    min_heap = []
+    heapq.heappush(min_heap, (0, (start_vertex, None)))
+
+    routing_table = {}
+    routing_table[start_vertex] = None
+
+    # Parcours du labyrinthe entier
+    while not(min_heap == []):
+        distance, tuplee = heapq.heappop(min_heap)
+        v, parent = tuplee
 
         for neighbor in maze_map[v]:
             distance_through_v = distance + maze_map[v][neighbor]
-            add_or_replace(min_heap, neighbor, distance_through_v)
+
+            heapq.heappush(min_heap, (distance_through_v, (neighbor, v)))
+            routing_table[neighbor] = v
+    
+    print(routing_table)
+    input()
+
+    return routing_table
     
 
 def find_route(routing_table, source_location, target_location):
@@ -88,71 +95,3 @@ def moves_from_route(route) :
             raise Exception("Impossible move")
     
     return moves[::-1]
-
-
-############## Priority queue Implementation #############
-
-def priority_queue():
-    return []
-
-def is_empty(queue):
-    return queue == priority_queue()
-
-def add_or_replace(queue, key, value):
-    for i in range(len(queue)) :
-        key_i, value_i = queue[i]
-        if value < value_i  :
-            return queue[:i] + [(key, value)] + queue[i:]
-    return queue + [(key, value)]
-
-def extract(queue):
-    return queue[0], queue[1:]
-
-
-############## FIFO Implementation ##############
-
-def create_structure () :
-    # Create an empty FIFO
-    return []
-
-def push_to_structure (structure, element) :
-    # Add an element to the FIFO
-    return [element] + structure
-
-def pop_from_structure (structure) :
-    # Extract an element from the FIFO
-    (current_vertex, parent) = structure.pop()
-    return (current_vertex, parent)
-
-def traversal (start_vertex, graph) :
-    # BFS traversal
-    # First we create either a LIFO or a FIFO
-    queuing_structure = create_structure()
-
-    # Add the starting vertex with None as parent
-    queuing_structure = push_to_structure (queuing_structure,(start_vertex, None))
-
-    # Initialize the outputs
-    explored_vertices = []
-    routing_table = {}
-
-    # Iterate while some vertices remain
-    while len(queuing_structure) > 0:
-
-        # This will return the next vertex to be examined, and the choice of queuing structure will change the resulting order
-        (current_vertex, parent) = pop_from_structure (queuing_structure)
-
-        # Tests whether the current vertex is in the list of explored vertices
-        if current_vertex not in explored_vertices:
-            # Mark the current_vertex as explored
-            explored_vertices.append(current_vertex)
-            # Update the routing table accordingly
-            routing_table[current_vertex] = parent
-
-            # Examine neighbors of the current vertex
-            for neighbor in graph[current_vertex]:
-              # We push all unexplored neighbors to the queue
-                if neighbor not in explored_vertices:
-                    queuing_structure = push_to_structure(queuing_structure,(neighbor, current_vertex))
-
-    return explored_vertices, routing_table
