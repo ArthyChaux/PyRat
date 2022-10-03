@@ -18,15 +18,13 @@ def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_
     global next_moves
 
 
-    # Table qui référence les déplacements à faire pour se rapprocher du joueur pour chaque case
-    routing_table = dijkstra(player_location, maze_map)
-    
     # Tableau répertoriant les cases où passer pour aller du joueur au fromage
-    route = find_route(routing_table, player_location, pieces_of_cheese[0])
-
+    route = dijkstra(maze_map, player_location, pieces_of_cheese[0])
 
     # Tableau répertoriant les deplacements à faire pour arriver au fromage
     next_moves = moves_from_route(route)
+    print(route)
+    print(next_moves)
 
 
 def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
@@ -40,9 +38,37 @@ def turn (maze_map, maze_width, maze_height, player_location, opponent_location,
 import heapq
 
 
-def dijkstra(start_vertex, maze_map):
-    # Initialisation de la routing table et du min_heap
+def dijkstra(maze_map, start_vertex, end_vertex):
+    q = [(0, start_vertex, [])]
+    seen = []
+    mins = {start_vertex: 0}
+
+    while q:
+        (cost, v, path) = heapq.heappop(q)
+
+        if v not in seen:
+            seen.append(v)
+            path = path + [v]
+
+            if v == end_vertex:
+                return path
+
+            for neighbor in maze_map[v]:
+                if neighbor in seen:
+                    continue
+
+                registered = mins.get(neighbor, None)
+                calculated = cost + maze_map[v][neighbor]
+
+                if registered is None or calculated < registered:
+                    mins[neighbor] = calculated
+                    heapq.heappush(q, (calculated, neighbor, path))
+
+    return (float("inf"), [])
+
+"""     # Initialisation de la routing table et du min_heap
     min_heap = []
+    # (distance from 0, (coordinates, parent))
     heapq.heappush(min_heap, (0, (start_vertex, None)))
 
     routing_table = {}
@@ -62,20 +88,7 @@ def dijkstra(start_vertex, maze_map):
     print(routing_table)
     input()
 
-    return routing_table
-    
-
-def find_route(routing_table, source_location, target_location):
-    # Renvoie un tableau répertoriant le chemin à suivre pour aller de source_location à target_location
-    # De la forme [source_location, ......, target_location]
-
-    route = [target_location]
-
-    while target_location != source_location:
-       target_location = routing_table[target_location]
-       route.append(target_location)
-
-    return route[::-1]
+    return routing_table """
 
 def moves_from_route(route) :
     # Transforme une route (tableau de cases à suivre) en tableau de déplacements
