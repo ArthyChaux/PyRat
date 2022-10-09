@@ -17,14 +17,11 @@ next_moves = []
 def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :
     global next_moves
 
-
     # Tableau répertoriant les cases où passer pour aller du joueur au fromage
     route = dijkstra(maze_map, player_location, pieces_of_cheese[0])
 
     # Tableau répertoriant les deplacements à faire pour arriver au fromage
     next_moves = moves_from_route(route)
-    print(route)
-    print(next_moves)
 
 
 def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
@@ -65,30 +62,6 @@ def dijkstra(maze_map, start_vertex, end_vertex):
                     heapq.heappush(q, (calculated, neighbor, path))
 
     return (float("inf"), [])
-
-"""     # Initialisation de la routing table et du min_heap
-    min_heap = []
-    # (distance from 0, (coordinates, parent))
-    heapq.heappush(min_heap, (0, (start_vertex, None)))
-
-    routing_table = {}
-    routing_table[start_vertex] = None
-
-    # Parcours du labyrinthe entier
-    while not(min_heap == []):
-        distance, tuplee = heapq.heappop(min_heap)
-        v, parent = tuplee
-
-        for neighbor in maze_map[v]:
-            distance_through_v = distance + maze_map[v][neighbor]
-
-            heapq.heappush(min_heap, (distance_through_v, (neighbor, v)))
-            routing_table[neighbor] = v
-    
-    print(routing_table)
-    input()
-
-    return routing_table """
 
 def moves_from_route(route) :
     # Transforme une route (tableau de cases à suivre) en tableau de déplacements
