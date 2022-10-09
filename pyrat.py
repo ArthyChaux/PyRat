@@ -44,7 +44,7 @@ import json
 # args.postprocessing =
 # args.load_match =
 # args.save_match =
-args.rat = "AIs/dijkstra.py"
+args.rat = "AIs/tsp.py"
 # args.python =
 # args.maze_file =
 args.width = 25
@@ -55,7 +55,7 @@ args.height = 25
 # args.mud_density =
 # args.mud_range =
 # args.maze_file =
-args.pieces = 1
+args.pieces = 4
 # args.random_cheese =
 # args.save = True
 # args.preparation_time =
