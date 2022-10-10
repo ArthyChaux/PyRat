@@ -63,6 +63,9 @@ def dijkstra(maze_map, start_vertex, end_vertex):
 
     return (float("inf"), [])
 
+
+############## Utilitaries ##############
+
 def moves_from_route(route) :
     # Transforme une route (tableau de cases à suivre) en tableau de déplacements
 
