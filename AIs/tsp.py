@@ -72,34 +72,36 @@ def find_route (routing_table, source_location, target_location) :
 import heapq
 priority_queue = []
 
-def dijkstra(maze_map, start_vertex, end_vertex):
-    q = [(0, start_vertex, [])]
-    seen = []
-    mins = {start_vertex: 0}
-
-    while q:
-        (cost, v, path) = heapq.heappop(q)
-
-        if v not in seen:
-            seen.append(v)
-            path = path + [v]
-
-            if v == end_vertex:
-                return path
-
-            for neighbor in maze_map[v]:
-                if neighbor in seen:
-                    continue
-
-                registered = mins.get(neighbor, None)
-                calculated = cost + maze_map[v][neighbor]
-
-                if registered is None or calculated < registered:
-                    mins[neighbor] = calculated
-                    heapq.heappush(q, (calculated, neighbor, path))
-
-    return (float("inf"), [])
-
+def dijkstra(graph, start_vertex):
+    explored_verticies=[]
+    distances={(0,0):0}
+    routing_table={}
+# initialize
+    min_heap = priority_queue
+    heapq.heappush(min_heap, (start_vertex, 0))
+    #L contient les lieux auxquels une distance est conjointe dans le dictionnaire de distances
+    L=[]
+    #distance_meta contiendra toutes les distances par rapport à start_vertex
+    distance_meta=[]
+    # algorithm loop
+    while len(min_heap)>0:
+        v, distance = heapq.heappop(min_heap)
+        distance_meta.append([v, distance])
+        if v not in explored_verticies:
+            explored_verticies.append(v)
+            d=distance
+            for neighbor in graph[v]:
+                if neighbor not in explored_verticies:
+                    distance_through_v = distance + graph[v][neighbor]
+                    heapq.heappush(min_heap, (neighbor, distance_through_v))
+                    if neighbor in L and distance_through_v<distances[neighbor]:
+                        distances[neighbor]=distance_through_v
+                        routing_table[neighbor]=v
+                    elif neighbor not in L:
+                        distances[neighbor]=distance_through_v
+                        routing_table[neighbor]=v
+                    L.append(neighbor)
+    return explored_verticies, distances, routing_table, distance_meta
 
 
 ##
@@ -121,7 +123,6 @@ def build_meta_graph (maze_map, locations) :
     return meta_graph
 
 
-
 def exhaustive_search(graph,pieces_of_cheese,player_location):
     remaining=pieces_of_cheese
     best=100000
@@ -132,27 +133,24 @@ def exhaustive_search(graph,pieces_of_cheese,player_location):
     weight=0
 #On créé la liste qui contiendra le meilleur chemin
     best_path=[]
-
-def bruteforce(remaining, vertex, path, weight, graph):
-    #On met ces variables en non local pour pouvoir les appeler dans les 2 fonctions
-    nonlocal best_path
-    nonlocal best
-#dès que le chemin a visité tout les lieux, on regarde si c'est le plus court chemin
-    if remaining ==[]:
-        if weight < best:
-            best = weight
-            best_path = path
-#tant qu'il reste des lieux à visiter, on utilise le recursif
-    else:
-        for i in remaining:
-            C=copy.deepcopy(remaining)
-            C.remove(i)
-        if weight + graph[vertex][i]<best:
-            bruteforce(C, i, path+[i], weight + graph[vertex][i],graph)
-            bruteforce(remaining,vertex,path,weight,graph)
-    print (best_path)
+    def bruteforce(remaining, vertex, path, weight, graph):
+        #On met ces variables en non local pour pouvoir les appeler dans les 2 fonctions
+        nonlocal best_path
+        nonlocal best
+    #dès que le chemin a visité tout les lieux, on regarde si c'est le plus court chemin
+        if remaining ==[]:
+            if weight < best:
+                best = weight
+                best_path = path
+    #tant qu'il reste des lieux à visiter, on utilise le recursif
+        else:
+            for i in remaining:
+                C=copy.deepcopy(remaining)
+                C.remove(i)
+                if weight + graph[vertex][i]<best:
+                    bruteforce(C, i, path+[i], weight + graph[vertex][i],graph)
+    bruteforce(remaining,vertex,path,weight,graph)
     return best_path
-
 
 listmouv=[]
 
@@ -161,9 +159,7 @@ def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_
     global bestpath
     bestpath=exhaustive_search(build_meta_graph (maze_map, [player_location]+pieces_of_cheese),pieces_of_cheese,player_location)
 
-
 i=1
-
 def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
     global listmouv
     global bestpath
