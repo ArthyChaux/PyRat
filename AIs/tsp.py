@@ -100,7 +100,7 @@ def dijkstra(maze_map, start_vertex, end_vertex):
 
     return (float("inf"), [])
 
-return explored_verticies, distances, routing_table, distance_meta
+
 
 ##
 
@@ -117,7 +117,7 @@ def build_meta_graph (maze_map, locations) :
         for x in distances:
 #On ajoute dans le dictionnaire les lieux des pièces de fromages et leur distance associés à la clé
             if x[0] in locations and x[0]!=loc:
-            meta_graph[loc][x[0]]=x[1]
+                meta_graph[loc][x[0]]=x[1]
     return meta_graph
 
 
