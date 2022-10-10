@@ -47,8 +47,8 @@ import json
 args.rat = "AIs/tsp.py"
 # args.python =
 # args.maze_file =
-args.width = 25
-args.height = 25
+args.width = 15
+args.height = 15
 # args.density =
 # args.nonconnected =
 # args.nonsymmetric =

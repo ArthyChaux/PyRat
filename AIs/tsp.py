@@ -1,6 +1,5 @@
  
  
-import random
 import copy
 
 
@@ -12,34 +11,32 @@ MOVE_UP = 'U'
 
 # Liste des déplacements à suivre
 next_moves = []
-bestpath = []
+next_cheeses = []
 
 
 
 ############## PYRAT TSP functions ##############
 
 def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :
-    global bestpath
+    global next_cheeses
 
     #Construit le meta graph du labyrinthe, avec pour sommets les fromage et le joueur
     meta_graph = build_meta_graph(maze_map, [player_location]+pieces_of_cheese)
-    #Choisis le meilleur chemin pour le rat à l'aide d'une recherche exhaustive
-    bestpath = exhaustive_search(meta_graph, pieces_of_cheese, player_location)
+    print(meta_graph)
 
-i = 1
+    #Choisis le meilleur parcours de fromage pour le rat à l'aide d'une recherche exhaustive
+    next_cheeses = exhaustive_search(meta_graph, player_location, pieces_of_cheese)
+    print(next_cheeses)
+
 def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
     global next_moves
-    global bestpath
-    global i
+    global next_cheeses
 
-    #on parcourt notre liste bestpath
-    if i != (len(bestpath)+1):
-#dès qu'on se déplace d'une case à l'autre, on change de lieu d'arrivée
-        if next_moves == []:
-            a = dijkstra(maze_map, player_location)[1]
-            route = find_route (a, player_location, bestpath[i])
-            next_moves = moves_from_route(route)
-            i += 1
+    #Si on est arrivé au fromage, on va au suivant
+    if next_moves == []:
+        routing_table = dijkstra(maze_map, player_location)[1]
+        route = find_route(routing_table, player_location, next_cheeses.pop(0))
+        next_moves = moves_from_route(route)
     
     return next_moves.pop()
 
@@ -47,45 +44,35 @@ def turn (maze_map, maze_width, maze_height, player_location, opponent_location,
 #################### Dijkstra #####################
 
 import heapq
-priority_queue = []
 
 def dijkstra(graph, start_vertex):
-    #Initialisation
-    explored_vertices = []
-    distances = {(0,0) : 0}
+    q = [(0, start_vertex, [])]
+    seen = []
+    #Dictionnaire des distances par rapport à start_vertex
+    distances = {start_vertex: 0}
+    #Routing table
     routing_table = {}
-    min_heap = priority_queue
-    heapq.heappush(min_heap, (start_vertex, 0))
 
-    #L contient les lieux auxquels une distance est conjointe dans le dictionnaire de distances
-    L = []
-    #distance_meta contiendra toutes les distances par rapport à start_vertex
-    distance_meta = []
+    while q:
+        (cost, v, path) = heapq.heappop(q)
 
-    # algorithm loop
-    while len(min_heap)>0:
-        v, distance = heapq.heappop(min_heap)
-        distance_meta.append([v, distance])
-
-        if v not in explored_vertices:
-            explored_vertices.append(v)
-            d=distance
+        if v not in seen:
+            seen.append(v)
+            path = path + [v]
 
             for neighbor in graph[v]:
-                if neighbor not in explored_vertices:
-                    distance_through_v = distance + graph[v][neighbor]
-                    heapq.heappush(min_heap, (neighbor, distance_through_v))
+                if neighbor in seen:
+                    continue
 
-                    if neighbor in L and distance_through_v < distances[neighbor]:
-                        distances[neighbor]=distance_through_v
-                        routing_table[neighbor]=v
-                    elif neighbor not in L:
-                        distances[neighbor]=distance_through_v
-                        routing_table[neighbor]=v
-                    
-                    L.append(neighbor)
-    
-    return distances, routing_table, distance_meta
+                registered = distances.get(neighbor, None)
+                calculated = cost + graph[v][neighbor]
+
+                if registered is None or calculated < registered:
+                    distances[neighbor] = calculated
+                    routing_table[neighbor] = v
+                    heapq.heappush(q, (calculated, neighbor, path))
+
+    return distances, routing_table
 
 
 #################### Meta graph #####################
@@ -99,46 +86,47 @@ def build_meta_graph (maze_map, vertices) :
         meta_graph[v] = {}
 
         #On récupère la liste des distances aux autres sommets
-        distances = dijkstra(maze_map, v)[2]
+        distances = dijkstra(maze_map, v)[0]
 
         #On choisis chaque couples de distance entre v et les autres sommets
-        for (v1, d) in distances:
-            #On les aujoute au meta graph
+        for v1 in distances:
+            #On les ajoute au meta graph
             if v1 in vertices and v1 != v:
-                meta_graph[v][v1] = d
+                meta_graph[v][v1] = distances[v1]
     
     return meta_graph
 
 
-def exhaustive_search(meta_graph, pieces_of_cheese, player_location):
-    remaining = pieces_of_cheese
+def exhaustive_search(meta_graph, player_location, pieces_of_cheese):
     best = 100000
-    vertex = player_location
-#On initialise la liste qui contiendra les différents chemins
-    path = [player_location]
-#On initialise la longueur du chemin à 0
-    weight = 0
-#On créé la liste qui contiendra le meilleur chemin
     best_path = []
 
-    def bruteforce(remaining, vertex, path, weight, meta_graph):
+    #Initialisation des variables de construction de chemin
+    path = []
+    weight = 0
+    remaining_cheeses = pieces_of_cheese
+
+    def bruteforce(remaining_cheeses, vertex, path, weight, meta_graph):
         #On met ces variables en non local pour pouvoir les appeler dans les 2 fonctions
         nonlocal best_path
         nonlocal best
-    #dès que le chemin a visité tout les lieux, on regarde si c'est le plus court chemin
-        if remaining ==[]:
+
+        #Si le chemin est plus court, on le sauvegarde
+        if remaining_cheeses == []:
             if weight < best:
                 best = weight
                 best_path = path
-    #tant qu'il reste des lieux à visiter, on utilise le recursif
+
+        #On construit tous les chemins
         else:
-            for i in remaining:
-                C = copy.deepcopy(remaining)
+            #Construit chaque chemin, en parcourant les fromages dans des sens différents
+            for i in remaining_cheeses:
+                C = copy.deepcopy(remaining_cheeses)
                 C.remove(i)
-                if weight + meta_graph[vertex][i]<best:
-                    bruteforce(C, i, path+[i], weight + meta_graph[vertex][i], meta_graph)
+                bruteforce(C, i, path+[i], weight + meta_graph[vertex][i], meta_graph)
     
-    bruteforce(remaining,vertex,path,weight,meta_graph)
+    #Garde le best_path en parcourant tous les chemins possible
+    bruteforce(remaining_cheeses, player_location, path, weight, meta_graph)
     return best_path
 
 ############## Utilitaries ##############
