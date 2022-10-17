@@ -98,7 +98,7 @@ def build_meta_graph (maze_map, vertices) :
 
 
 def exhaustive_search(meta_graph, player_location, pieces_of_cheese):
-    best = 100000
+    best = float("inf")
     best_path = []
 
     #Initialisation des variables de construction de chemin
@@ -120,25 +120,9 @@ def exhaustive_search(meta_graph, player_location, pieces_of_cheese):
         #On construit tous les chemins
         else:
             if weight < best:
-                remaining_cheeses_sorted = []
-
-                while len(remaining_cheeses) > 0:
-                    minimum = float("inf")
-                    minimum_location = (0,0)
-
-                    for cheese in remaining_cheeses:
-                        distance = meta_graph[vertex][cheese]
-                        if distance < minimum:
-                            distance = minimum
-                            minimum_location = cheese
-                        
-                    remaining_cheeses_sorted.append(minimum_location)
-                    remaining_cheeses.remove(minimum_location)
-
-
                 #Construit chaque chemin, en parcourant les fromages dans des sens différents
-                for i in remaining_cheeses_sorted:
-                    C = copy.deepcopy(remaining_cheeses_sorted)
+                for i in remaining_cheeses:
+                    C = copy.deepcopy(remaining_cheeses)
                     C.remove(i)
                     bruteforce(C, i, path+[i], weight + meta_graph[vertex][i], meta_graph)
     

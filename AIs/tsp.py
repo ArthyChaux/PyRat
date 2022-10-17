@@ -48,8 +48,10 @@ import heapq
 def dijkstra(graph, start_vertex):
     q = [(0, start_vertex, [])]
     seen = []
+
     #Dictionnaire des distances par rapport à start_vertex
     distances = {start_vertex: 0}
+
     #Routing table
     routing_table = {}
 
@@ -98,7 +100,7 @@ def build_meta_graph (maze_map, vertices) :
 
 
 def exhaustive_search(meta_graph, player_location, pieces_of_cheese):
-    best = 100000
+    best = float("inf")
     best_path = []
 
     #Initialisation des variables de construction de chemin
