@@ -110,11 +110,11 @@ def draw_text(text, font, color, max_size, index_size, x, y, screen):
     
 def draw_scores(p1name, score1, image1, p2name, score2, image2, window_width, window_height, screen, player1_is_alive, player2_is_alive, moves1, miss1, moves2, miss2, stuck1, stuck2):
     if player1_is_alive:
-        draw_text("Score: "+str(score1), "Kalam-Bold", (50,50,50), window_width / 6, 0, int(window_width / 12), window_width / 3 + 50, screen)
+        draw_text("Score : "+str(score1), "Kalam-Bold", (50,50,50), window_width / 6, 0, int(window_width / 12), window_width / 3 + 50, screen)
         draw_text(p1name, "Kalam-Bold", (50,50,50), window_width / 6, 5, int(window_width / 12), window_width / 3, screen)
-        draw_text("Moves: " + str(moves1), "Kalam-Regular", (2,118,137), window_width / 6, 1, int(window_width / 12), window_width / 3 + 150, screen)
-        draw_text("Miss: " + str(miss1), "Kalam-Regular", (229,35,64), window_width / 6, 1, int(window_width / 12), window_width / 3 + 180, screen)
-        draw_text("Mud: " + str(stuck1), "Kalam-Regular", (229,35,64), window_width / 6, 1, int(window_width / 12), window_width / 3 + 210, screen)
+        draw_text("Mouvements : " + str(moves1), "Kalam-Regular", (2,118,137), window_width / 6, 1, int(window_width / 12), window_width / 3 + 150, screen)
+        draw_text("Ratés : " + str(miss1), "Kalam-Regular", (229,35,64), window_width / 6, 1, int(window_width / 12), window_width / 3 + 180, screen)
+        draw_text("Toiles : " + str(stuck1), "Kalam-Regular", (229,35,64), window_width / 6, 1, int(window_width / 12), window_width / 3 + 210, screen)
     if player2_is_alive:
         draw_text("Score: "+str(score2), "Kalam-Bold", (50,50,50), window_width / 6, 2, int(11 * window_width / 12), window_width / 3 + 50, screen)
         draw_text(p2name, "Kalam-Bold", (50,50,50), window_width / 6, 6, int(11 * window_width / 12), window_width / 3, screen)
@@ -365,7 +365,7 @@ def run(maze, width, height, q, q_render_in, q_quit, p1name, p2name, q1_out, q2_
             if (pygame.time.get_ticks() - starting_time < args.preparation_time) and not(args.desactivate_animations):
                 remaining = args.preparation_time - pygame.time.get_ticks() + starting_time
                 if remaining > 0:
-                    draw_text("Starting in " + str(remaining // 1000) + "." + (str(remaining % 1000)).zfill(3), "Kalam-Bold", (50,50,50), window_width, 4, window_width // 2, 25, screen)
+                    draw_text("Le jeu débute dans " + str(remaining // 1000) + "." + (str(remaining % 1000)).zfill(3), "Kalam-Bold", (50,50,50), window_width, 4, window_width // 2, 25, screen)
 
             debug("Drawing on screen",2)
             if not(args.save_images):

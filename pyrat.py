@@ -44,18 +44,18 @@ import json
 # args.postprocessing =
 # args.load_match =
 # args.save_match =
-args.rat = "AIs/tsp.py"
+args.rat = "AIs/dijkstra.py"
 # args.python =
 # args.maze_file =
-args.width = 25
-args.height = 25
+args.width = 15
+args.height = 15
 # args.density =
 # args.nonconnected =
 # args.nonsymmetric =
 # args.mud_density =
 # args.mud_range =
 # args.maze_file =
-args.pieces = 5
+args.pieces = 1
 # args.random_cheese =
 # args.save = True
 # args.preparation_time =
@@ -63,7 +63,7 @@ args.pieces = 5
 # args.synchronous =
 # args.max_turns =
 # args.auto_exit =
-# args.fullscreen =
+# args.fullscreen = True
 args.window_width = 720
 args.window_height = 480
 # args.tests =
@@ -429,7 +429,7 @@ def run_game(screen, infoObject):
 
         # Check if too many turns have occured, this is mainly to avoid unending games
         if turns == args.max_turns:
-            send_info("max number of turns reached!", q_info)
+            send_info("Le nombre de tour maximum a été atteint!", q_info)
             break
         turns = turns + 1
 
@@ -477,10 +477,10 @@ def run_game(screen, infoObject):
         # Check if one of the players won
         if args.rat != "" and args.python != "":
             if score1 == score2 and score1 >= args.pieces / 2:
-                send_info("The Rat(" + p1name + ") and the Python (" + p2name + ") got the same number of pieces of cheese!", q_info)
+                send_info("Le Papillon (" + p1name + ") and the Python (" + p2name + ") got the same number of pieces of cheese!", q_info)
                 break
             if score1 > args.pieces / 2:
-                send_info("The Rat (" + p1name + ") won the match!", q_info)
+                send_info("Le papillon (" + p1name + ") a remporté le duel !", q_info)
                 win1 = win1 + 1
                 break
             if score2 > args.pieces / 2:
@@ -489,7 +489,7 @@ def run_game(screen, infoObject):
                 break
         else:
             if score1 >= args.pieces:
-                send_info("The Rat (" + p1name + ") got all pieces of cheese!", q_info)
+                send_info("Le papillon (" + p1name + ") a butiné toutes les fleurs !", q_info)
                 win1 = win1 + 1
                 break
             elif score2 >= args.pieces:
@@ -498,7 +498,7 @@ def run_game(screen, infoObject):
                 break
         # Or if there is no more cheese
         if len(pieces_of_cheese) == 0:
-            send_info("No more pieces of cheese!", q_info)
+            send_info("Il n'y a plus de fleurs à butiner!", q_info)
             break
 
         # If players can move, ask them their next decision
@@ -657,7 +657,7 @@ def main():
             infoObject = pygame.display.Info()
             image_icon = pygame.image.load("resources" + os.path.sep + "various" + os.path.sep + "pyrat.ico")
             pygame.display.set_icon(image_icon)
-            pygame.display.set_caption("PyRat")
+            pygame.display.set_caption("Pypillon")
             if args.fullscreen:
                 #screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h), pygame.FULLSCREEN)
                 screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h), pygame.NOFRAME|pygame.FULLSCREEN)
