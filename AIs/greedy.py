@@ -1,67 +1,149 @@
+ 
+ 
+import heapq
+
+
+# Directions possibles
 MOVE_DOWN = 'D'
 MOVE_LEFT = 'L'
 MOVE_RIGHT = 'R'
 MOVE_UP = 'U'
 
-
-import random
-import heapq
-priority_queue = []
-
+# Liste des déplacements à suivre
+next_moves = []
+next_cheeses = []
 
 
-##############################################################
-# The preprocessing function is called at the start of a game
-# It can be used to perform intensive computations that can be
-# used later to move the player in the maze.
-# ------------------------------------------------------------
-# maze_map : dict(pair(int, int), dict(pair(int, int), int))
-# maze_width : int
-# maze_height : int
-# player_location : pair(int, int)
-# opponent_location : pair(int,int)
-# pieces_of_cheese : list(pair(int, int))
-# time_allowed : float
-##############################################################
+############## PYRAT TSP functions ##############
+
+def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :
+    global next_moves
+
+    #Construit le meta graph du labyrinthe, avec pour sommets les fromage et le joueur
+    meta_graph = build_meta_graph(maze_map, [player_location]+pieces_of_cheese)
+    print(meta_graph)
+
+    #Choisis le meilleur parcours de fromage pour le rat à l'aide d'une recherche en greedy
+    next_cheeses = greedy(maze_map, player_location, pieces_of_cheese)
+    print(next_cheeses)
 
 
-def move_from_locations (source_location, target_location) :
+def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
+    global next_moves
+    global next_cheeses
 
-    difference = (target_location[0] - source_location[0], target_location[1] - source_location[1])
-    if difference == (0, -1) :
-        return MOVE_DOWN
-    elif difference == (0, 1) :
-        return MOVE_UP
-    elif difference == (1, 0) :
-        return MOVE_RIGHT
-    elif difference == (-1, 0) :
-        return MOVE_LEFT
-    else :
-        raise Exception("Impossible move")
-
-
-def create_structure():
-    return []
+    #Si on est arrivé au fromage, on va au suivant
+    if next_moves == []:
+        routing_table = dijkstra(maze_map, player_location)[1]
+        route = find_route(routing_table, player_location, next_cheeses.pop(0))
+        next_moves = moves_from_route(route)
+    
+    print(next_moves)
+    return next_moves.pop(0)
 
 
-def dijkstra(start_vertex, graph):
-    structure = create_structure()
-    heapq.heappush(structure, (0,start_vertex, None))
-    explored_vertices = {}
-    rooting_table = {}
+#################### Dijkstra #####################
 
-    while len(structure) > 0 :
-        (distance, current_vertex, parent) = heapq.heappop(structure)
-        if current_vertex not in explored_vertices :
-            explored_vertices[current_vertex] = distance
-            rooting_table[current_vertex] = parent
+def dijkstra(graph, start_vertex):
+    q = [(0, start_vertex, [])]
+    seen = []
 
-            for neighbor in graph[current_vertex]:
-                if neighbor not in explored_vertices:
-                    newdistance = distance + graph[current_vertex][neighbor]
-                    heapq.heappush(structure, (newdistance ,neighbor, current_vertex))
-    return explored_vertices, rooting_table
+    print(start_vertex)
+    #Dictionnaire des distances par rapport à start_vertex
+    distances = {start_vertex: 0}
 
+    #Routing table
+    routing_table = {}
+
+    while q:
+        (cost, v, path) = heapq.heappop(q)
+
+        if v not in seen:
+            seen.append(v)
+            path = path + [v]
+
+            for neighbor in graph[v]:
+                if neighbor in seen:
+                    continue
+
+                registered = distances.get(neighbor, None)
+                calculated = cost + graph[v][neighbor]
+
+                if registered is None or calculated < registered:
+                    distances[neighbor] = calculated
+                    routing_table[neighbor] = v
+                    heapq.heappush(q, (calculated, neighbor, path))
+
+    return distances, routing_table
+
+
+#################### Meta graph #####################
+
+def build_meta_graph (maze_map, vertices):
+    #Initialisation du graphe
+    meta_graph = {}
+
+    #Pour chaque sommet
+    for v in vertices:
+        meta_graph[v] = {}
+
+        #On récupère la liste des distances aux autres sommets
+        distances = dijkstra(maze_map, v)[0]
+
+        #On choisis chaque couples de distance entre v et les autres sommets
+        for v1 in distances:
+            #On les ajoute au meta graph
+            if v1 in vertices and v1 != v:
+                meta_graph[v][v1] = distances[v1]
+    
+    return meta_graph
+
+def greedy (graph, initial_vertex, vertices_to_visit) :
+    current_vertex = initial_vertex
+    visited_verticies = []
+
+    while vertices_to_visit:
+        scores = give_score(graph, current_vertex, vertices_to_visit)
+        score_minimal = min(scores.values())
+
+        for vert in scores :
+            if scores[vert] == score_minimal :
+                visited_verticies.append(vert)
+                vertices_to_visit.remove(vert)
+                current_vertex = vert
+                break
+    
+    return visited_verticies
+
+def give_score (graph, current_vertex, neighbors) :
+    scores = {}
+    explored_verticies = dijkstra(graph, current_vertex)[0]
+
+    for neighbor in neighbors :
+        scores[neighbor] = explored_verticies[neighbor]
+
+    return scores
+
+
+
+
+############## Utilitaries ##############
+
+def moves_from_route(route):
+    seq_move = []
+    for i in range (len(route)-1):
+        difference = (route[i+1][0] - route[i][0], route[i+1][1] - route[i][1])
+        if difference == (0, -1) :
+            seq_move.append (MOVE_DOWN)
+        elif difference == (0, 1) :
+            seq_move.append (MOVE_UP)
+        elif difference == (1, 0) :
+            seq_move.append (MOVE_RIGHT)
+        elif difference == (-1, 0) :
+            seq_move.append (MOVE_LEFT)
+        else :
+            raise Exception("Impossible move")
+    return seq_move[::-1]
 
 def find_route(rooting_table, source_location, target_location):
     route = []
@@ -71,79 +153,3 @@ def find_route(rooting_table, source_location, target_location):
         t = rooting_table[t]
     route.append(t)
     return route
-
-def moves_from_locations(locations):
-    moves = []
-
-    for i in range(len(locations)-1) :
-        moves.append(move_from_locations(locations[i],locations[i+1]))
-    return moves
-
-moves = []
-
-
-def build_meta_graph (maze_map, pieces_of_cheese,player_location) :
-    meta_graph = {}
-    meta_graph2 = {}
-    #meta_graph[player_location] = 0
-    for cheese1 in pieces_of_cheese :
-        if cheese1 != player_location :
-            explored_vertices, rooting_table = dijkstra(player_location, maze_map)
-            meta_graph[(player_location, cheese1)] = explored_vertices[cheese1]
-        for cheese2 in pieces_of_cheese :
-                explored_vertices, rooting_table = dijkstra(cheese1, maze_map)
-                meta_graph[(cheese1,cheese2)] = explored_vertices[cheese2]
-    for E1 in meta_graph :
-        ver_dist = {}
-        for E2 in meta_graph :
-                if E2[0] == E1[0] :
-                    ver_dist[E2[1]]= meta_graph[E2]
-        meta_graph2[E1[0]] = ver_dist
-    return meta_graph2
-
-def give_score (graph, current_vertex, neighbors) :
-    scores = {}
-    explored_verticies = dijkstra(current_vertex,graph)[0]
-    for neighbor in neighbors :
-        scores[neighbor] = explored_verticies[neighbor]
-    return scores
-
-def greedy (graph, initial_vertex, vertices_to_visit) :
-    current_vertex = initial_vertex
-    visited_verticies = []
-    while vertices_to_visit :
-        scores = give_score(graph,current_vertex,vertices_to_visit)
-        score_minimal = min(scores.values())
-        for vert in scores :
-            if scores[vert] == score_minimal :
-                visited_verticies.append(vert)
-                vertices_to_visit.remove(vert)
-                current_vertex = vert
-                break
-    return visited_verticies
-
-
-def meta_graph_route_to_route(localisations,maze_map) :
-    route2 = []
-    route = []
-    for i in range(len(localisations)-1):
-        explored_vertices1, rooting_table1 = dijkstra(localisations[i], maze_map)
-        route = find_route(rooting_table1, localisations[i], localisations[i+1])[:-1]
-        route.reverse()
-        route2 = route2 + route
-    return  [localisations[0]] + route2
-
-
-def preprocessing (maze_map, maze_width, maze_height, player_location, opponent_location, pieces_of_cheese, time_allowed) :
-    global moves
-    meta_graph = build_meta_graph(maze_map, pieces_of_cheese,player_location)
-    chemin = [player_location] + greedy(maze_map,player_location,pieces_of_cheese)
-    print(chemin)
-    route = meta_graph_route_to_route(chemin,maze_map)
-    moves = moves_from_locations(route)
-
-
-def turn (maze_map, maze_width, maze_height, player_location, opponent_location, player_score, opponent_score, pieces_of_cheese, time_allowed) :
-    global moves
-    if moves :
-         return moves.pop(0)
