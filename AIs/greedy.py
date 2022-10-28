@@ -12,24 +12,8 @@ import heapq
 priority_queue = []
 
 
-
-##############################################################
-# The preprocessing function is called at the start of a game
-# It can be used to perform intensive computations that can be
-# used later to move the player in the maze.
-# ------------------------------------------------------------
-# maze_map : dict(pair(int, int), dict(pair(int, int), int))
-# maze_width : int
-# maze_height : int
-# player_location : pair(int, int)
-# opponent_location : pair(int,int)
-# pieces_of_cheese : list(pair(int, int))
-# time_allowed : float
-##############################################################
-
-
 def move_from_locations (source_location, target_location) :
-
+    #Renvoie en fonction du trajet voulu le déplacement à faire
     difference = (target_location[0] - source_location[0], target_location[1] - source_location[1])
     if difference == (0, -1) :
         return MOVE_DOWN
@@ -48,21 +32,28 @@ def create_structure():
 
 
 def dijkstra(start_vertex, graph):
+    #Initialisation de l'algorithme de Djikstra
     structure = create_structure()
     heapq.heappush(structure, (0,start_vertex, None))
     explored_vertices = {}
     rooting_table = {}
 
+    #Tant qu'il reste des noeuds inexplorés
     while len(structure) > 0 :
+        #On récupère un noeud inexploré
         (distance, current_vertex, parent) = heapq.heappop(structure)
-        if current_vertex not in explored_vertices :
+
+        if current_vertex not in explored_vertices:
+            #On enregistre le noeud inexploré dans les tables à sauvegarder
             explored_vertices[current_vertex] = distance
             rooting_table[current_vertex] = parent
 
+            #On enregistre les voisins inexplorés du noeud pour les explorer
             for neighbor in graph[current_vertex]:
                 if neighbor not in explored_vertices:
                     newdistance = distance + graph[current_vertex][neighbor]
                     heapq.heappush(structure, (newdistance ,neighbor, current_vertex))
+    
     return explored_vertices, rooting_table
 
 
@@ -76,6 +67,7 @@ def find_route(rooting_table, source_location, target_location):
     return route
 
 def moves_from_locations(locations):
+    #Renvoie en fonction du trajet voulu les déplacements à faire
     moves = []
 
     for i in range(len(locations)-1) :
