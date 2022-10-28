@@ -1,3 +1,6 @@
+#Le but de cet algorithme Greedy est de toujours se diriger vers le fromage le plus proche
+#Il n'est pas optimal mais sa complexité plus faible que celle du TSP lui permet de fonctionner
+
 MOVE_DOWN = 'D'
 MOVE_LEFT = 'L'
 MOVE_RIGHT = 'R'
@@ -101,25 +104,31 @@ def build_meta_graph (maze_map, pieces_of_cheese,player_location) :
         meta_graph2[E1[0]] = ver_dist
     return meta_graph2
 
+
 def give_score (graph, current_vertex, neighbors) :
     scores = {}
     explored_verticies = dijkstra(current_vertex,graph)[0]
+    #Initialisation tableau Score
     for neighbor in neighbors :
         scores[neighbor] = explored_verticies[neighbor]
+        #pour chaque fromages, on calcule la distance qui sépare le rat du fromage pour la stocker dans Score
     return scores
 
 def greedy (graph, initial_vertex, vertices_to_visit) :
     current_vertex = initial_vertex
     visited_verticies = []
+    #Initialisation Greedy
     while vertices_to_visit :
         scores = give_score(graph,current_vertex,vertices_to_visit)
         score_minimal = min(scores.values())
+        #Distance du fromage le plus proche du rat
         for vert in scores :
             if scores[vert] == score_minimal :
                 visited_verticies.append(vert)
                 vertices_to_visit.remove(vert)
                 current_vertex = vert
                 break
+    #On va à chaque fois au fromage le plus proche jusqu'à ce qu'il n'y ai plus de fromage
     return visited_verticies
 
 
