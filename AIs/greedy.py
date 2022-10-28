@@ -101,10 +101,13 @@ def build_meta_graph (maze_map, vertices):
 def greedy (graph, initial_vertex, vertices_to_visit) :
     current_vertex = initial_vertex
     visited_verticies = []
+    #Initialisation Greedy
 
     while vertices_to_visit:
+    #Tant qu'il y a des fromages dans le labyrinthe
         scores = give_score(graph, current_vertex, vertices_to_visit)
         score_minimal = min(scores.values())
+        #La distance du fromage le plus proche du rat
 
         for vert in scores :
             if scores[vert] == score_minimal :
@@ -112,15 +115,18 @@ def greedy (graph, initial_vertex, vertices_to_visit) :
                 vertices_to_visit.remove(vert)
                 current_vertex = vert
                 break
+        #Donne dans l'ordre les fromages les plus proche du rat à visiter
     
     return visited_verticies
 
 def give_score (graph, current_vertex, neighbors) :
     scores = {}
     explored_verticies = dijkstra(graph, current_vertex)[0]
+    #Initialisation du score
 
     for neighbor in neighbors :
         scores[neighbor] = explored_verticies[neighbor]
+        #Distance de chaque fromages voisins dans Score
 
     return scores
 
