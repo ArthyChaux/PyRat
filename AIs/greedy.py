@@ -120,7 +120,7 @@ def greedy (graph, initial_vertex, vertices_to_visit) :
                 vertices_to_visit.remove(vert)
                 current_vertex = vert
                 break
-    #On va à chaque fois au fromage le plus proche jusqu'à ce qu'il n'y ai plus de fromage
+    #On stock à chaque fois la distance du fromage le plus proche jusqu'à ce qu'il n'y ai plus de fromage
     return visited_verticies
 
 
